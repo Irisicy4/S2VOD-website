@@ -50,7 +50,11 @@ a:hover { text-decoration: underline; }
 
 /* ---------- hero ---------- */
 
-.hero { padding: 3.2rem 0 1.6rem; text-align: center; }
+.hero {
+  padding: 3.2rem 0 2rem; text-align: center;
+  background: linear-gradient(180deg, #eef5fb 0%, #f7fafd 100%);
+  border-bottom: 1px solid var(--border);
+}
 
 .hero h1 {
   font-size: 2.35rem;
@@ -108,7 +112,7 @@ a:hover { text-decoration: underline; }
   margin: 1.9rem auto 0.4rem; max-width: 920px;
 }
 .stat {
-  background: var(--paper-alt); border: 1px solid var(--border);
+  background: var(--paper); border: 1px solid var(--border);
   border-radius: var(--radius); padding: 0.95rem 0.6rem; text-align: center;
 }
 .stat .num { font-size: 1.55rem; font-weight: 800; color: var(--accent); line-height: 1.15; }
