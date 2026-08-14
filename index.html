@@ -277,6 +277,15 @@ MathJax = { tex: { inlineMath: [["\\(", "\\)"]] }, svg: { fontCache: "global" } 
   </div>
 </section>
 
+<!-- ================= CONCLUSION ================= -->
+<section id="conclusion">
+  <div class="container">
+    <h2>Conclusion</h2>
+    <p>We presented S<sup>2</sup>VOD, an unsupervised on-policy self-distillation framework for improving VLM perception without privileged annotations. The central idea is to construct an information gap between teacher and student views: the teacher observes the original image, while the student learns from a degraded view. This asymmetry turns the model's own predictions into a perception-aligned training signal, avoiding the need for ground-truth answers, regions, or external teacher models. Across benchmarks and model scales, S<sup>2</sup>VOD improves both fine-grained perception and mathematical reasoning, distinguishing it from privileged-supervision methods that strengthen perception but can weaken reasoning, and from intrinsic-reward RL methods that preserve reasoning but provide weaker perceptual gains.</p>
+    <p>Our analysis shows that the effectiveness of S<sup>2</sup>VOD is governed by the magnitude and semantics of the induced information gap. Augmentation must remove enough task-relevant evidence to create a useful learning signal, but not so much that it changes the underlying question or makes recovery impossible. Downscaling plus Gaussian noise provides a robust default, while alternative augmentations can shift the learned capability toward localized or holistic perception. Hyperparameter studies further show that the method is robust to the teacher update rate and benefits from a balanced divergence, supporting the view that the essential supervision comes from constructed teacher&ndash;student asymmetry rather than from teacher self-improvement. These results suggest a simple and broadly applicable path for annotation-free perception improvement: useful supervision can be obtained not by adding external labels, but by carefully controlling what the student is allowed to see.</p>
+  </div>
+</section>
+
 <!-- ================= BIBTEX ================= -->
 <section id="bibtex">
   <div class="container">
