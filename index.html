@@ -83,7 +83,6 @@ MathJax = { tex: { inlineMath: [["\\(", "\\)"]] }, svg: { fontCache: "global" } 
 <section id="overview">
   <div class="container">
     <h2>How S<sup>2</sup>VOD works</h2>
-    <div class="fig-hint">Hover (or tap) the diagram &mdash; augmentations show their definitions, and components with an ablation pop up the corresponding table.</div>
 
     <div id="arch-figure">
       <img src="static/images/figure.svg" alt="S2VOD architecture: an EMA teacher scores student rollouts under the clean image while the student generates from an augmented view; a per-token divergence is the entire training signal. Below, the augmentation space: downscale, noise, contrast, rotation, zoom-out, pixelation, brightness, saturation, crop-and-zoom, occlusion.">
