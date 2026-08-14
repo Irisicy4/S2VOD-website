@@ -283,6 +283,15 @@
     });
   });
 
+  popup.addEventListener("click", function (e) {
+    /* jumping to the ablation section should expand it */
+    if (e.target.classList && e.target.classList.contains("popup-link")) {
+      var det = document.getElementById("ablations");
+      if (det && det.tagName === "DETAILS") det.open = true;
+    }
+    e.stopPropagation();
+  });
+
   popup.addEventListener("mouseenter", function () {
     if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
   });

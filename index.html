@@ -93,7 +93,7 @@ MathJax = { tex: { inlineMath: [["\\(", "\\)"]] }, svg: { fontCache: "global" } 
 
 <!-- ================= OVERVIEW / INTERACTIVE FIGURE ================= -->
 <section id="overview">
-  <div class="container wide">
+  <div class="container">
     <h2>How S<sup>2</sup>VOD works</h2>
     <div class="fig-hint">Hover (or tap) the diagram &mdash; augmentations show their definitions, and components with an ablation pop up the corresponding table.</div>
 
@@ -188,7 +188,7 @@ MathJax = { tex: { inlineMath: [["\\(", "\\)"]] }, svg: { fontCache: "global" } 
 
 <!-- ================= RESULTS ================= -->
 <section id="results">
-  <div class="container wide">
+  <div class="container">
     <h2>Results</h2>
 
     <h3>FineVision leaderboard: a 4B model above every open-source model compared</h3>
@@ -262,8 +262,8 @@ MathJax = { tex: { inlineMath: [["\\(", "\\)"]] }, svg: { fontCache: "global" } 
 </tbody>
 </table></div>
 
-    <div id="ablations">
-      <h3>Ablations</h3>
+    <details id="ablations">
+      <summary>Ablations <span class="muted" style="font-weight:400;font-size:0.85rem">(click to expand &mdash; or hover the architecture figure above)</span></summary>
       <p class="table-caption"><b>Component ablation (Table 4).</b> <em>w/o Aug.</em> removes the view asymmetry (student sees the same clean image as the teacher); <em>w/o EMA</em> keeps the augmentation but freezes the teacher at the base model. No asymmetry collapses the gain to base level (70.52); a frozen teacher costs only 0.40 &mdash; the supervision comes from the constructed asymmetry, not teacher self-improvement.</p>
       <div class="table-scroll"><table class="results" id="table-component">
 <thead><tr><th>Method</th><th>V*</th><th>Zoom</th><th>HR-4K</th><th>HR-8K</th><th>MME-RW</th><th>MME-RW-CN</th><th>Avg</th></tr></thead>
@@ -301,7 +301,7 @@ MathJax = { tex: { inlineMath: [["\\(", "\\)"]] }, svg: { fontCache: "global" } 
       </div>
 
       <p class="table-caption" style="margin-top:1rem"><b>Privileged information does not compose with augmentation.</b> Giving the teacher its ground-truth bounding boxes while corrupting the student degrades monotonically with augmentation coverage &mdash; 76.56 (none) &rarr; 75.29 (p=0.3) &rarr; 73.17 (p=0.9), with a 50/50 mixture in between (75.14). Augmentation-induced asymmetry is a <em>replacement</em> for privileged supervision, not an additive trick.</p>
-    </div>
+    </details>
   </div>
 </section>
 

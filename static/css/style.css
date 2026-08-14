@@ -131,7 +131,7 @@ a:hover { text-decoration: underline; }
   border-radius: 999px; display: table; margin: 0 auto 1rem; padding: 0.3rem 1.1rem;
 }
 
-#arch-figure { position: relative; max-width: 1080px; margin: 0 auto; }
+#arch-figure { position: relative; margin: 0 auto; }
 #arch-figure > img { display: block; width: 100%; height: auto; }
 #arch-figure svg { display: block; }
 
@@ -264,3 +264,13 @@ footer {
   .ablation-grid { grid-template-columns: 1fr; }
   .hero h1 { font-size: 1.85rem; }
 }
+
+/* collapsible ablations */
+details#ablations { margin-top: 1.5rem; }
+details#ablations summary {
+  cursor: pointer; font-size: 1.2rem; font-weight: 700; list-style: none;
+  padding: 0.6rem 0; border-top: 1px solid var(--border);
+}
+details#ablations summary::before { content: "\25B8"; color: var(--accent); margin-right: 0.5rem; }
+details#ablations[open] summary::before { content: "\25BE"; }
+details#ablations summary::-webkit-details-marker { display: none; }
