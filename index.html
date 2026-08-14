@@ -262,22 +262,16 @@ MathJax = { tex: { inlineMath: [["\\(", "\\)"]] }, svg: { fontCache: "global" } 
 </tbody>
 </table></div>
 
-    <details id="ablations">
-      <summary>Ablations <span class="muted" style="font-weight:400;font-size:0.85rem">(click to expand &mdash; or hover the architecture figure above)</span></summary>
-      <p class="table-caption"><b>Component ablation (Table 4).</b> <em>w/o Aug.</em> removes the view asymmetry (student sees the same clean image as the teacher); <em>w/o EMA</em> keeps the augmentation but freezes the teacher at the base model. No asymmetry collapses the gain to base level (70.52); a frozen teacher costs only 0.40 &mdash; the supervision comes from the constructed asymmetry, not teacher self-improvement.</p>
-      <div class="table-scroll"><table class="results" id="table-component">
+    <div id="ablation-data" hidden>
+<table class="results" id="table-component">
 <thead><tr><th>Method</th><th>V*</th><th>Zoom</th><th>HR-4K</th><th>HR-8K</th><th>MME-RW</th><th>MME-RW-CN</th><th>Avg</th></tr></thead>
 <tbody>
 <tr class="ours"><td class="rowlabel">S<sup>2</sup>VOD</td><td class="best" style="background:rgba(157,195,230,0.72)">87.43</td><td class="best" style="background:rgba(157,195,230,0.80)">57.99</td><td style="background:rgba(157,195,230,0.08)">84.88</td><td class="best" style="background:rgba(157,195,230,0.80)">83.62</td><td class="best" style="background:rgba(157,195,230,0.80)">72.87</td><td class="best" style="background:rgba(157,195,230,0.80)">71.29</td><td class="best" style="background:rgba(157,195,230,0.80)">76.35</td></tr>
 <tr><td class="rowlabel">w/o Aug.</td><td style="background:rgba(157,195,230,0.08)">79.06</td><td style="background:rgba(157,195,230,0.08)">50.18</td><td class="best" style="background:rgba(157,195,230,0.70)">86.50</td><td style="background:rgba(157,195,230,0.08)">80.62</td><td style="background:rgba(157,195,230,0.08)">62.85</td><td style="background:rgba(157,195,230,0.08)">63.90</td><td style="background:rgba(157,195,230,0.08)">70.52</td></tr>
 <tr><td class="rowlabel">w/o EMA</td><td class="best" style="background:rgba(157,195,230,0.80)">88.48</td><td style="background:rgba(157,195,230,0.44)">54.08</td><td style="background:rgba(157,195,230,0.80)">86.75</td><td style="background:rgba(157,195,230,0.71)">83.25</td><td style="background:rgba(157,195,230,0.75)">72.15</td><td style="background:rgba(157,195,230,0.77)">70.98</td><td style="background:rgba(157,195,230,0.75)">75.95</td></tr>
 </tbody>
-</table></div>
-
-      <div class="ablation-grid">
-        <div>
-          <p class="table-caption"><b>Teacher update rate (Table 5).</b> The six-benchmark average moves &le;0.8 across EMA decays, non-monotonically &mdash; the EMA update is not an essential component.</p>
-          <div class="table-scroll"><table class="results" id="table-ema">
+</table>
+<table class="results" id="table-ema">
 <thead><tr><th>Teacher decay</th><th>MME-RW</th><th>MME-RW-CN</th><th>Avg</th></tr></thead>
 <tbody>
 <tr><td class="rowlabel">0.95</td><td class="best" style="background:rgba(157,195,230,0.80)">72.87</td><td style="background:rgba(157,195,230,0.46)">71.29</td><td class="best" style="background:rgba(157,195,230,0.80)">76.35</td></tr>
@@ -285,23 +279,16 @@ MathJax = { tex: { inlineMath: [["\\(", "\\)"]] }, svg: { fontCache: "global" } 
 <tr><td class="rowlabel">0.999</td><td style="background:rgba(157,195,230,0.22)">72.29</td><td class="best" style="background:rgba(157,195,230,0.80)">71.56</td><td style="background:rgba(157,195,230,0.48)">76.00</td></tr>
 <tr><td class="rowlabel">1.0 (fixed teacher)</td><td style="background:rgba(157,195,230,0.08)">72.15</td><td style="background:rgba(157,195,230,0.08)">70.98</td><td style="background:rgba(157,195,230,0.44)">75.95</td></tr>
 </tbody>
-</table></div>
-        </div>
-        <div>
-          <p class="table-caption"><b>Divergence (Table 6).</b> JSD &gt; reverse KL &gt; forward KL: forward KL drags the student toward detail it cannot see; reverse KL is mode-seeking and discards the signal.</p>
-          <div class="table-scroll"><table class="results" id="table-alpha">
+</table>
+<table class="results" id="table-alpha">
 <thead><tr><th>&alpha;</th><th>MME-RW</th><th>MME-RW-CN</th><th>Avg</th></tr></thead>
 <tbody>
 <tr><td class="rowlabel">0.0 (forward KL)</td><td style="background:rgba(157,195,230,0.08)">71.92</td><td style="background:rgba(157,195,230,0.08)">69.75</td><td style="background:rgba(157,195,230,0.08)">74.74</td></tr>
 <tr><td class="rowlabel">0.5 (JSD)</td><td class="best" style="background:rgba(157,195,230,0.80)">74.15</td><td class="best" style="background:rgba(157,195,230,0.80)">71.34</td><td class="best" style="background:rgba(157,195,230,0.80)">76.05</td></tr>
 <tr><td class="rowlabel">1.0 (reverse KL)</td><td style="background:rgba(157,195,230,0.24)">72.43</td><td style="background:rgba(157,195,230,0.65)">71.00</td><td style="background:rgba(157,195,230,0.49)">75.49</td></tr>
 </tbody>
-</table></div>
-        </div>
-      </div>
-
-      <p class="table-caption" style="margin-top:1rem"><b>Privileged information does not compose with augmentation.</b> Giving the teacher its ground-truth bounding boxes while corrupting the student degrades monotonically with augmentation coverage &mdash; 76.56 (none) &rarr; 75.29 (p=0.3) &rarr; 73.17 (p=0.9), with a 50/50 mixture in between (75.14). Augmentation-induced asymmetry is a <em>replacement</em> for privileged supervision, not an additive trick.</p>
-    </details>
+</table>
+    </div>
   </div>
 </section>
 

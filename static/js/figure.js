@@ -229,8 +229,7 @@
     popup.innerHTML =
       '<div class="popup-title">' + ab.title + "</div>" +
       '<div class="popup-note">' + ab.note + "</div>" +
-      '<div class="table-scroll">' + tableHtml + "</div>" +
-      '<a class="popup-link" href="' + ab.anchor + '">Jump to full ablation section →</a>';
+      '<div class="table-scroll">' + tableHtml + "</div>";
     popup.classList.add("show");
     place(popup, el, "below");
     clearActive();
@@ -281,15 +280,6 @@
       }
       e.stopPropagation();
     });
-  });
-
-  popup.addEventListener("click", function (e) {
-    /* jumping to the ablation section should expand it */
-    if (e.target.classList && e.target.classList.contains("popup-link")) {
-      var det = document.getElementById("ablations");
-      if (det && det.tagName === "DETAILS") det.open = true;
-    }
-    e.stopPropagation();
   });
 
   popup.addEventListener("mouseenter", function () {
