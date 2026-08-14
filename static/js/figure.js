@@ -1,4 +1,4 @@
-/* S2VOD interactive architecture figure.
+/* S2VOPD interactive architecture figure.
  *
  * Wiring model (survives figure replacement): any element inside #arch-figure with
  *   data-aug="<key>"      -> hover tooltip with that augmentation's definition

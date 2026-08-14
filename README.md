@@ -1,6 +1,6 @@
-# S²VOD project page
+# S²VOPD project page
 
-Static project page for **Self-Supervised Visual On-Policy Distillation** (S²VOD).
+Static project page for **Self-Supervised Visual On-Policy Distillation** (S²VOPD).
 Plain HTML/CSS/JS, no build step — deployable to GitHub Pages as-is (serve this
 directory as the site root).
 
