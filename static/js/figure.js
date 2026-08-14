@@ -115,7 +115,7 @@
       name: "Occlusion",
       family: "occlusion",
       def: "Random erasing (grey or noise fill) and GridMask delete localized regions while leaving the rest untouched — distinguished from information reduction by spatial locality.",
-      strength: "≤3 patches of 5–30% area, or lattice period 0.1–0.3 with keep ratio 0.5–0.7; p = 0.9"
+      strength: "≤3 patches of 5–30% area, or lattice period 0.1–0.3 with keep ratio 0.5–0.7"
     }
   };
 
@@ -152,19 +152,19 @@
   var ABLATIONS = {
     component: {
       title: "Component ablation (Table 4)",
-      note: "Removing the view asymmetry (w/o Aug.) collapses the gain to base level; freezing the teacher (w/o EMA) costs only 0.40 — the signal comes from the constructed asymmetry, not teacher self-improvement.",
+      note: "Removing the view asymmetry (w/o Aug.) collapses the gain to base level; freezing the teacher (w/o EMA) costs only 0.40 — the supervision comes more from the constructed asymmetry than from teacher self-improvement.",
       source: "table-component",
       anchor: "#ablations"
     },
     ema: {
       title: "Teacher update rate (Table 5)",
-      note: "The EMA teacher: φ ← (1−η)φ + ηθ. Varying the decay from 0.95 to a fully frozen teacher moves the average by ≤0.8 — S²VOD is not sensitive to how fast the teacher tracks the student.",
+      note: "The EMA teacher: φ ← (1−η)φ + ηθ. Across decay values 0.95–0.999 the six-benchmark average stays within 0.8% with no monotonic trend — EMA is a stable implementation choice; the essential supervision comes from the constructed view asymmetry.",
       source: "table-ema",
       anchor: "#ablations"
     },
     jsd: {
       title: "Divergence choice (Table 6)",
-      note: "Generalized JSD (α = 0.5) beats both one-sided KLs: forward KL chases teacher detail the student cannot see; reverse KL is mode-seeking and discards the signal the asymmetry creates.",
+      note: "Generalized JSD (α = 0.5) beats both one-sided KLs: forward KL is too coverage-seeking, forcing the student toward detail unavailable in its degraded view; reverse KL is too mode-seeking, discarding softer corrective signals. JSD balances coverage and selectivity.",
       source: "table-alpha",
       anchor: "#ablations"
     }
