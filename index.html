@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>S&sup2;VOD &middot; Self-Supervised Visual On-Policy Distillation</title>
+<meta name="description" content="S2VOD constructs on-policy distillation signals from asymmetric augmented views: the teacher sees the clean image, the student a degraded one. No labels, no rewards, no stronger teacher — +6.8 avg on fine-grained perception, 96% of supervised Vision-OPD.">
+<meta property="og:title" content="Self-Supervised Visual On-Policy Distillation">
+<meta property="og:description" content="Where can informative teacher–student asymmetry come from when nothing privileged is available? Subtract information from the student instead of adding it to the teacher.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128269;</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="static/css/style.css">
+<script>
+MathJax = { tex: { inlineMath: [["\\(", "\\)"]] }, svg: { fontCache: "global" } };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+<body>
+
+<!-- ================= HERO ================= -->
+<header class="hero">
+  <div class="container">
+    <h1>Self-Supervised Visual<br>On-Policy Distillation</h1>
+    <div class="venue">S<sup>2</sup>VOD &mdash; asymmetry for free: the teacher sees the image, the student sees less of it</div>
+
+    <div class="authors">
+      <span class="author">Yijiang Li<sup>&spades;</sup></span>
+      <span class="author">Yijun Liang<sup>&diams;</sup></span>
+      <span class="author">Yunjie Tian<sup>&clubs;</sup></span>
+      <span class="author">Bingyang Wang<sup>&hearts;</sup></span>
+      <span class="author">Ke Zhang<sup>&dagger;</sup></span>
+      <span class="author">Zhenfei Yin<sup>&#9733;</sup></span>
+      <span class="author">Di Fu<sup>&clubs;</sup></span>
+      <span class="author">Philip Torr<sup>&#9733;</sup></span>
+      <span class="author">Nuno Vasconcelos<sup>&spades;</sup></span>
+    </div>
+    <div class="affiliations">
+      <sup>&spades;</sup>UC San Diego &nbsp;
+      <sup>&diams;</sup>University of Maryland, College Park &nbsp;
+      <sup>&hearts;</sup>Georgia Institute of Technology &nbsp;
+      <sup>&dagger;</sup>Johns Hopkins University &nbsp;
+      <sup>&#9733;</sup>University of Oxford &nbsp;
+      <sup>&clubs;</sup>ByteDance
+    </div>
+    <div class="contact">{yijiangli, nuno}@ucsd.edu</div>
+
+    <div class="logo-strip">
+      <img src="static/images/logos/ucsd.png" alt="UC San Diego">
+      <img src="static/images/logos/umd.png" alt="University of Maryland">
+      <img src="static/images/logos/gatech.png" alt="Georgia Tech">
+      <img src="static/images/logos/jhu.png" alt="Johns Hopkins University">
+      <img src="static/images/logos/oxford.png" alt="University of Oxford">
+      <img src="static/images/logos/bytedance.png" alt="ByteDance">
+    </div>
+
+    <div class="button-row">
+      <span class="btn disabled" data-soon="coming soon">
+        <svg viewBox="0 0 24 24"><path d="M12 2 1 21h22L12 2zm0 4.5L18.5 19h-13L12 6.5z"/></svg>
+        arXiv
+      </span>
+      <span class="btn disabled" data-soon="coming soon">
+        <svg viewBox="0 0 24 24"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.1 3.29 9.42 7.86 10.95.58.1.79-.25.79-.55v-2.1c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.04-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.72-1.55-2.55-.29-5.23-1.28-5.23-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.43-2.69 5.41-5.25 5.69.41.36.78 1.05.78 2.12v3.14c0 .3.2.66.8.55A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+        Code
+      </span>
+      <a class="btn" href="#bibtex">
+        <svg viewBox="0 0 24 24"><path d="M7 3h10a2 2 0 0 1 2 2v16l-7-4-7 4V5a2 2 0 0 1 2-2z"/></svg>
+        BibTeX
+      </a>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="num">70.7 &rarr; 77.4</div>
+        <div class="lab">Qwen3.5-4B avg. on six fine-grained perception benchmarks (+6.8)</div>
+      </div>
+      <div class="stat">
+        <div class="num">96%</div>
+        <div class="lab">of the supervised Vision-OPD's improvement recovered &mdash; with zero annotations</div>
+      </div>
+      <div class="stat">
+        <div class="num">4B &gt; 235B</div>
+        <div class="lab">above every open-source model compared, up to Qwen3-VL-235B</div>
+      </div>
+      <div class="stat">
+        <div class="num">0</div>
+        <div class="lab">labels, rewards, region annotations, or stronger teachers used</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ================= OVERVIEW / INTERACTIVE FIGURE ================= -->
+<section id="overview">
+  <div class="container wide">
+    <h2>How S<sup>2</sup>VOD works</h2>
+    <div class="fig-hint">Hover (or tap) the diagram &mdash; augmentations show their definitions, and components with an ablation pop up the corresponding table.</div>
+
+    <div id="arch-figure">
+      <img src="static/images/figure.svg" alt="S2VOD architecture: an EMA teacher scores student rollouts under the clean image while the student generates from an augmented view; a per-token divergence is the entire training signal. Below, the augmentation space: downscale, noise, contrast, rotation, zoom-out, pixelation, brightness, saturation, crop-and-zoom, occlusion.">
+      <svg viewBox="0 0 681.76 358.99" style="position:absolute;inset:0;width:100%;height:100%" aria-hidden="true">
+        <g fill="rgba(157,195,230,0)" stroke="none">
+          <!-- pipeline components -->
+          <rect data-ablation="ema"       x="306" y="21"  width="88"  height="41" rx="8"></rect>
+          <rect data-tip="student"        x="306" y="80"  width="88"  height="41" rx="8"></rect>
+          <rect data-ablation="jsd"       x="440" y="34"  width="234" height="60" rx="8"></rect>
+          <rect data-ablation="component" x="147" y="75"  width="118" height="63" rx="8"></rect>
+          <rect data-tip="cleanview"      x="92"  y="57"  width="38"  height="22" rx="6"></rect>
+          <rect data-tip="cleanview"      x="359" y="57"  width="38"  height="22" rx="6"></rect>
+          <!-- augmentation tiles, row 1 -->
+          <rect data-aug="downscale"  x="19"  y="149" width="103" height="98" rx="8"></rect>
+          <rect data-aug="noise"      x="127" y="149" width="103" height="98" rx="8"></rect>
+          <rect data-aug="contrast"   x="234" y="149" width="103" height="98" rx="8"></rect>
+          <rect data-aug="rotation"   x="341" y="149" width="103" height="98" rx="8"></rect>
+          <rect data-aug="zoomout"    x="448" y="149" width="103" height="98" rx="8"></rect>
+          <!-- augmentation tiles, row 2 -->
+          <rect data-aug="pixelation" x="19"  y="249" width="103" height="100" rx="8"></rect>
+          <rect data-aug="brightness" x="127" y="249" width="103" height="100" rx="8"></rect>
+          <rect data-aug="saturation" x="234" y="249" width="103" height="100" rx="8"></rect>
+          <rect data-aug="crop"       x="341" y="249" width="103" height="100" rx="8"></rect>
+          <rect data-aug="occlusion"  x="448" y="249" width="103" height="100" rx="8"></rect>
+          <!-- family legend -->
+          <rect data-family="info"        x="563" y="204" width="92" height="23" rx="6"></rect>
+          <rect data-family="geometric"   x="563" y="228" width="92" height="23" rx="6"></rect>
+          <rect data-family="photometric" x="563" y="251" width="92" height="23" rx="6"></rect>
+          <rect data-family="occlusion"   x="563" y="277" width="92" height="23" rx="6"></rect>
+        </g>
+      </svg>
+    </div>
+    <p class="caption"><b>Overview of S<sup>2</sup>VOD.</b> The student generates rollouts from a corrupted view of the image; an EMA teacher scores the same generated prefixes under the clean view; a top-<i>k</i> generalized JSD transfers the teacher's better-informed token distributions to the student. The augmentation applied to the student view is the sole source of supervision &mdash; and the object of our study.</p>
+  </div>
+</section>
+
+<!-- ================= ABSTRACT ================= -->
+<section id="abstract">
+  <div class="container">
+    <h2>Abstract</h2>
+    <p>Visual on-policy distillation relies heavily on an informative teacher&ndash;student asymmetry, through either a larger, stronger teacher or privileged supervision such as reference answers or ground-truth regions of interest. This raises a fundamental question: <em>where can informative asymmetry come from when nothing privileged is available?</em></p>
+    <p>We answer this by inverting where the asymmetry comes from. Rather than adding privileged information to the teacher, we <b>subtract information from the student</b>. This creates the same effective learning signal <em>for free</em> as a teacher with access to information unavailable to the student &mdash; without ground-truth annotations, rewards, or a separate stronger teacher model. Building on this principle, we introduce <b>Self-Supervised Visual On-Policy Distillation (S<sup>2</sup>VOD)</b>: the teacher's distribution conditioned on the original image is distilled on-policy into the student distribution conditioned on a strongly augmented view of the same image.</p>
+    <p>To understand <em>what makes augmentation-induced asymmetry useful</em>, we systematically explore a broad design space of visual augmentations and uncover that (1)&nbsp;<em>asymmetry matters</em>: all four augmentation families improve performance, while symmetric self-distillation degrades it; (2)&nbsp;<em>strength matters</em>: performance peaks at a moderate strength; and (3)&nbsp;<em>the gap must remain task-consistent</em>: augmentations that completely remove the question-relevant evidence induce large but uninformative discrepancies. These findings lead to a simple default instantiation: downscaling with stochastic Gaussian noise. Across six fine-grained perception benchmarks, S<sup>2</sup>VOD improves Qwen3.5-4B from 70.7% to 77.4% &mdash; above every open-source model compared, up to Qwen3-VL at 235B &mdash; while on the annotation-bearing Vision-OPD corpus it recovers 96% of the improvement achieved by the supervised Vision-OPD (76.6%).</p>
+  </div>
+</section>
+
+<!-- ================= METHOD ================= -->
+<section id="method">
+  <div class="container">
+    <h2>Method</h2>
+    <p>Let \(\pi_\theta\) be the policy being optimized and \(\pi_\phi\) its exponential-moving-average teacher, \(\phi \leftarrow (1-\eta)\phi + \eta\theta\). For each image&ndash;question pair \((x, q)\), a stochastic transformation \(T \sim \mathcal{T}\) produces the student view \(\tilde{x} = T(x)\) while the teacher keeps the clean view \(x\). The student samples rollouts from its corrupted view, and the training objective minimizes the expected per-token divergence between teacher and student, evaluated <em>along the student's own trajectories</em>:</p>
+    <div class="method-block">
+      \[
+      \mathcal{L}(\theta) \;=\; \mathbb{E}_{(x,q)\sim\mathcal{D}}\;
+      \mathbb{E}_{y\sim\pi_\theta(\cdot\mid\tilde{x},q)}\!\left[\frac{1}{|y|}\sum_{t=1}^{|y|}
+      D\big(\pi_\phi(\cdot \mid x, q, y_{&lt;t}) \,\big\|\, \pi_\theta(\cdot \mid \tilde{x}, q, y_{&lt;t})\big)\right]
+      \]
+      <p class="muted" style="margin:0.4rem 0 0">\(D\) is the generalized Jensen&ndash;Shannon divergence at \(\alpha = 0.5\), restricted to the teacher's top-\(k\) tokens and renormalized. No reward, value function, or KL-to-reference penalty is used &mdash; this divergence is the entire training signal.</p>
+    </div>
+    <p>The transformation \(T\) is the sole source of the teacher's informational advantage. Among a broad design space of four augmentation families &mdash; information reduction, geometric, photometric, and occlusion &mdash; the champion recipe is strikingly simple:</p>
+    <div class="method-block">
+      \[
+      T(x) \;=\; A_{\mathrm{noise}}\big(A_{\mathrm{down}}(x; s);\, \lambda_{\mathrm{noise}}\big),
+      \qquad s \sim \mathcal{U}(0.3, 0.6)
+      \]
+      <p class="muted" style="margin:0.4rem 0 0">Downscale every student view to 0.3&ndash;0.6&times; resolution (without resizing back &mdash; fewer visual tokens), then add DDPM-style Gaussian noise (\(\sigma \approx 0.11\)) with probability 0.5. Bonus: lower-resolution student inputs make rollouts and forward passes cheaper.</p>
+    </div>
+
+    <h3 style="text-align:center;margin-top:2rem">What makes augmentation-induced asymmetry useful?</h3>
+    <div class="findings">
+      <div class="finding">
+        <span class="k">1 &middot; Asymmetry matters</span>
+        <p>Every augmentation family improves over the base model (info reduction 75.65, photometric 74.40, geometric 74.30, occlusion 72.44 vs. base 70.58) &mdash; while symmetric self-distillation with no augmentation <em>degrades</em> it to 65.21.</p>
+      </div>
+      <div class="finding">
+        <span class="k">2 &middot; Strength matters</span>
+        <p>Performance follows an inverted U in the induced teacher&ndash;student gap: accuracy rises with the token-level JSD up to &asymp;0.014, then declines. Moderate downscaling (0.3&ndash;0.6&times;) beats both weaker and stronger settings.</p>
+      </div>
+      <div class="finding">
+        <span class="k">3 &middot; The gap must stay task-consistent</span>
+        <p>Aggressive cropping produces the <em>largest</em> gap in our study yet the worst results (71.53 &rarr; 68.76 &rarr; 67.44 with strength): once the augmentation removes the evidence the question needs, a bigger discrepancy stops being an informative signal.</p>
+      </div>
+    </div>
+    <div style="margin-top:1.4rem">
+      <img src="static/images/families_gap.png" alt="(a) performance of each augmentation family applied alone; (b) accuracy versus the teacher-student predictive gap, showing an inverted U" style="width:100%;border-radius:12px">
+      <p class="caption"><b>(a)</b> Each augmentation family applied alone. <b>(b)</b> Accuracy vs. the teacher&ndash;student predictive gap (token-level JS divergence over the first ten training steps): an inverted U, with crop configurations falling off the curve.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= RESULTS ================= -->
+<section id="results">
+  <div class="container wide">
+    <h2>Results</h2>
+
+    <h3>FineVision leaderboard: a 4B model above every open-source model compared</h3>
+    <p class="table-caption">S<sup>2</sup>VOD post-trained on FineVision (zero annotations), against open-source, proprietary, and privileged-information methods on six fine-grained perception benchmarks (accuracy %, unweighted average). Post-training lifts Qwen3.5-4B from 70.68 to <b>77.44</b> &mdash; above Qwen3-VL-Instruct-235B (75.75), tying the 397B Qwen3.5, beating the GPT-5 series, and matching Gemini-3-Flash.</p>
+    <div class="table-scroll"><table class="results">
+<thead><tr><th>Method</th><th>V*</th><th>Zoom</th><th>HR-4K</th><th>HR-8K</th><th>MME-RW</th><th>MME-RW-CN</th><th class="avgcol">Avg</th></tr></thead>
+<tbody>
+<tr class="group"><td colspan="8">Open-source models</td></tr>
+<tr><td class="rowlabel">MiniCPM-V-4.5 (9B)</td><td style="background:rgba(157,195,230,0.10)">70.68</td><td style="background:rgba(157,195,230,0.16)">42.60</td><td style="background:rgba(157,195,230,0.16)">69.63</td><td style="background:rgba(157,195,230,0.08)">61.50</td><td style="background:rgba(157,195,230,0.16)">62.65</td><td style="background:rgba(157,195,230,0.32)">61.64</td><td style="background:rgba(157,195,230,0.08)">61.45</td></tr>
+<tr><td class="rowlabel">Qwen2.5-VL-7B</td><td style="background:rgba(157,195,230,0.35)">78.53</td><td style="background:rgba(157,195,230,0.16)">42.49</td><td style="background:rgba(157,195,230,0.23)">71.62</td><td style="background:rgba(157,195,230,0.26)">67.88</td><td style="background:rgba(157,195,230,0.08)">60.80</td><td style="background:rgba(157,195,230,0.19)">58.30</td><td style="background:rgba(157,195,230,0.15)">63.27</td></tr>
+<tr><td class="rowlabel">MiMo-VL-RL (7B)</td><td style="background:rgba(157,195,230,0.50)">83.25</td><td style="background:rgba(157,195,230,0.26)">45.68</td><td style="background:rgba(157,195,230,0.29)">73.50</td><td style="background:rgba(157,195,230,0.30)">69.38</td><td style="background:rgba(157,195,230,0.17)">62.73</td><td style="background:rgba(157,195,230,0.09)">55.89</td><td style="background:rgba(157,195,230,0.23)">65.07</td></tr>
+<tr><td class="rowlabel">Qwen3-VL-4B</td><td style="background:rgba(157,195,230,0.40)">80.10</td><td style="background:rgba(157,195,230,0.08)">40.24</td><td style="background:rgba(157,195,230,0.44)">78.25</td><td style="background:rgba(157,195,230,0.40)">72.88</td><td style="background:rgba(157,195,230,0.20)">63.47</td><td style="background:rgba(157,195,230,0.40)">63.63</td><td style="background:rgba(157,195,230,0.28)">66.43</td></tr>
+<tr><td class="rowlabel">Thyme (7B)</td><td style="background:rgba(157,195,230,0.47)">82.20</td><td style="background:rgba(157,195,230,0.24)">45.09</td><td style="background:rgba(157,195,230,0.40)">77.00</td><td style="background:rgba(157,195,230,0.38)">72.00</td><td style="background:rgba(157,195,230,0.26)">64.80</td><td style="background:rgba(157,195,230,0.43)">64.59</td><td style="background:rgba(157,195,230,0.33)">67.61</td></tr>
+<tr><td class="rowlabel">DeepEyesV2 (7B)</td><td style="background:rgba(157,195,230,0.45)">81.68</td><td style="background:rgba(157,195,230,0.24)">44.97</td><td style="background:rgba(157,195,230,0.43)">77.88</td><td style="background:rgba(157,195,230,0.43)">73.75</td><td style="background:rgba(157,195,230,0.27)">64.90</td><td style="background:rgba(157,195,230,0.45)">65.07</td><td style="background:rgba(157,195,230,0.35)">68.04</td></tr>
+<tr><td class="rowlabel">DeepEyes (7B)</td><td style="background:rgba(157,195,230,0.58)">85.86</td><td style="background:rgba(157,195,230,0.29)">46.51</td><td style="background:rgba(157,195,230,0.34)">75.13</td><td style="background:rgba(157,195,230,0.40)">72.63</td><td style="background:rgba(157,195,230,0.23)">64.10</td><td style="background:rgba(157,195,230,0.41)">64.09</td><td style="background:rgba(157,195,230,0.35)">68.05</td></tr>
+<tr><td class="rowlabel">Qwen3-VL-Instruct (8B)</td><td style="background:rgba(157,195,230,0.55)">84.82</td><td style="background:rgba(157,195,230,0.17)">42.96</td><td style="background:rgba(157,195,230,0.48)">79.63</td><td style="background:rgba(157,195,230,0.47)">75.25</td><td style="background:rgba(157,195,230,0.19)">63.19</td><td style="background:rgba(157,195,230,0.43)">64.61</td><td style="background:rgba(157,195,230,0.36)">68.41</td></tr>
+<tr><td class="rowlabel">GLM-4.5V (108B)</td><td style="background:rgba(157,195,230,0.50)">83.25</td><td style="background:rgba(157,195,230,0.39)">49.23</td><td style="background:rgba(157,195,230,0.55)">81.63</td><td style="background:rgba(157,195,230,0.46)">74.88</td><td style="background:rgba(157,195,230,0.32)">66.04</td><td style="background:rgba(157,195,230,0.28)">60.71</td><td style="background:rgba(157,195,230,0.40)">69.29</td></tr>
+<tr><td class="rowlabel">Qwen3.5-4B (base)</td><td style="background:rgba(157,195,230,0.53)">84.29</td><td style="background:rgba(157,195,230,0.33)">47.69</td><td style="background:rgba(157,195,230,0.63)">84.38</td><td style="background:rgba(157,195,230,0.61)">80.13</td><td style="background:rgba(157,195,230,0.22)">63.86</td><td style="background:rgba(157,195,230,0.40)">63.70</td><td style="background:rgba(157,195,230,0.45)">70.68</td></tr>
+<tr><td class="rowlabel">GLM-4.6V (106B)</td><td style="background:rgba(157,195,230,0.62)">86.91</td><td style="background:rgba(157,195,230,0.41)">50.06</td><td style="background:rgba(157,195,230,0.56)">82.13</td><td style="background:rgba(157,195,230,0.57)">78.88</td><td style="background:rgba(157,195,230,0.30)">65.57</td><td style="background:rgba(157,195,230,0.47)">65.62</td><td style="background:rgba(157,195,230,0.49)">71.53</td></tr>
+<tr><td class="rowlabel">Kimi-K2.6 (1T)</td><td style="background:rgba(157,195,230,0.67)">88.48</td><td style="background:rgba(157,195,230,0.52)">53.14</td><td style="background:rgba(157,195,230,0.55)">81.88</td><td style="background:rgba(157,195,230,0.55)">78.00</td><td style="background:rgba(157,195,230,0.47)">69.22</td><td style="background:rgba(157,195,230,0.49)">66.13</td><td style="background:rgba(157,195,230,0.54)">72.81</td></tr>
+<tr><td class="rowlabel">SenseNova-MARS (8B)</td><td style="background:rgba(157,195,230,0.78)">92.15</td><td style="background:rgba(157,195,230,0.34)">47.81</td><td style="background:rgba(157,195,230,0.59)">83.13</td><td style="background:rgba(157,195,230,0.56)">78.38</td><td style="background:rgba(157,195,230,0.40)">67.90</td><td style="background:rgba(157,195,230,0.60)">68.90</td><td style="background:rgba(157,195,230,0.55)">73.05</td></tr>
+<tr><td class="rowlabel">Kimi-K2.5 (1T)</td><td style="background:rgba(157,195,230,0.58)">85.86</td><td style="background:rgba(157,195,230,0.63)">56.33</td><td style="background:rgba(157,195,230,0.55)">81.87</td><td style="background:rgba(157,195,230,0.47)">75.38</td><td style="background:rgba(157,195,230,0.57)">71.51</td><td style="background:rgba(157,195,230,0.58)">68.40</td><td style="background:rgba(157,195,230,0.56)">73.23</td></tr>
+<tr><td class="rowlabel">Qwen3-VL-Instruct (235B)</td><td style="background:rgba(157,195,230,0.75)">91.10</td><td style="background:rgba(157,195,230,0.62)">56.09</td><td style="background:rgba(157,195,230,0.69)">86.13</td><td style="background:rgba(157,195,230,0.62)">80.38</td><td style="background:rgba(157,195,230,0.58)">71.74</td><td style="background:rgba(157,195,230,0.61)">69.04</td><td style="background:rgba(157,195,230,0.66)">75.75</td></tr>
+<tr><td class="rowlabel">Qwen3.5 (397B)</td><td style="background:rgba(157,195,230,0.65)">87.96</td><td style="background:rgba(157,195,230,0.66)">57.16</td><td style="background:rgba(157,195,230,0.79)">89.38</td><td style="background:rgba(157,195,230,0.76)">85.50</td><td style="background:rgba(157,195,230,0.72)">74.82</td><td style="background:rgba(157,195,230,0.64)">69.82</td><td style="background:rgba(157,195,230,0.73)">77.44</td></tr>
+<tr class="group"><td colspan="8">Proprietary models</td></tr>
+<tr><td class="rowlabel">GPT-5.1</td><td style="background:rgba(157,195,230,0.08)">70.16</td><td style="background:rgba(157,195,230,0.32)">47.22</td><td style="background:rgba(157,195,230,0.08)">67.00</td><td style="background:rgba(157,195,230,0.19)">65.25</td><td style="background:rgba(157,195,230,0.23)">64.04</td><td style="background:rgba(157,195,230,0.08)">55.57</td><td style="background:rgba(157,195,230,0.08)">61.54</td></tr>
+<tr><td class="rowlabel">GPT-5.2</td><td style="background:rgba(157,195,230,0.36)">79.06</td><td style="background:rgba(157,195,230,0.44)">50.89</td><td style="background:rgba(157,195,230,0.53)">81.12</td><td style="background:rgba(157,195,230,0.56)">78.38</td><td style="background:rgba(157,195,230,0.62)">72.60</td><td style="background:rgba(157,195,230,0.60)">68.80</td><td style="background:rgba(157,195,230,0.50)">71.81</td></tr>
+<tr><td class="rowlabel">GPT-5.4</td><td style="background:rgba(157,195,230,0.30)">76.96</td><td style="background:rgba(157,195,230,0.50)">52.66</td><td style="background:rgba(157,195,230,0.62)">84.00</td><td style="background:rgba(157,195,230,0.54)">77.88</td><td style="background:rgba(157,195,230,0.69)">74.20</td><td style="background:rgba(157,195,230,0.68)">70.93</td><td style="background:rgba(157,195,230,0.54)">72.77</td></tr>
+<tr><td class="rowlabel">Gemini-3-Flash</td><td style="background:rgba(157,195,230,0.60)">86.39</td><td style="background:rgba(157,195,230,0.73)">59.29</td><td style="background:rgba(157,195,230,0.74)">87.88</td><td style="background:rgba(157,195,230,0.75)">85.00</td><td style="background:rgba(157,195,230,0.72)">74.86</td><td style="background:rgba(157,195,230,0.75)">72.62</td><td style="background:rgba(157,195,230,0.74)">77.67</td></tr>
+<tr><td class="rowlabel">Gemini-3.5-Flash</td><td style="background:rgba(157,195,230,0.68)">89.01</td><td style="background:rgba(157,195,230,0.80)">61.42</td><td style="background:rgba(157,195,230,0.78)">89.12</td><td style="background:rgba(157,195,230,0.79)">86.62</td><td style="background:rgba(157,195,230,0.74)">75.31</td><td style="background:rgba(157,195,230,0.80)">73.97</td><td style="background:rgba(157,195,230,0.80)">79.24</td></tr>
+<tr><td class="rowlabel">Gemini-3.1-Pro</td><td style="background:rgba(157,195,230,0.65)">87.96</td><td style="background:rgba(157,195,230,0.79)">61.18</td><td style="background:rgba(157,195,230,0.80)">89.63</td><td style="background:rgba(157,195,230,0.80)">86.88</td><td style="background:rgba(157,195,230,0.80)">76.53</td><td style="background:rgba(157,195,230,0.77)">73.31</td><td style="background:rgba(157,195,230,0.80)">79.25</td></tr>
+<tr class="group"><td colspan="8">w/ privileged info.</td></tr>
+<tr><td class="rowlabel">ZwZ-7B</td><td style="background:rgba(157,195,230,0.67)">88.48</td><td style="background:rgba(157,195,230,0.60)">55.62</td><td style="background:rgba(157,195,230,0.35)">75.38</td><td style="background:rgba(157,195,230,0.41)">73.25</td><td style="background:rgba(157,195,230,0.33)">66.21</td><td style="background:rgba(157,195,230,0.53)">66.96</td><td style="background:rgba(157,195,230,0.47)">70.98</td></tr>
+<tr><td class="rowlabel">O<span class='sc'>psd</span></td><td style="background:rgba(157,195,230,0.45)">81.68</td><td style="background:rgba(157,195,230,0.50)">52.54</td><td style="background:rgba(157,195,230,0.53)">81.25</td><td style="background:rgba(157,195,230,0.54)">77.75</td><td style="background:rgba(157,195,230,0.59)">71.91</td><td style="background:rgba(157,195,230,0.72)">71.96</td><td style="background:rgba(157,195,230,0.54)">72.85</td></tr>
+<tr><td class="rowlabel">ZwZ-4B</td><td style="background:rgba(157,195,230,0.80)">92.67</td><td style="background:rgba(157,195,230,0.61)">55.74</td><td style="background:rgba(157,195,230,0.55)">81.75</td><td style="background:rgba(157,195,230,0.59)">79.50</td><td style="background:rgba(157,195,230,0.43)">68.52</td><td style="background:rgba(157,195,230,0.57)">68.09</td><td style="background:rgba(157,195,230,0.60)">74.38</td></tr>
+<tr><td class="rowlabel">ZwZ-8B</td><td style="background:rgba(157,195,230,0.75)">91.10</td><td style="background:rgba(157,195,230,0.69)">58.11</td><td style="background:rgba(157,195,230,0.63)">84.38</td><td style="background:rgba(157,195,230,0.66)">82.00</td><td style="background:rgba(157,195,230,0.50)">69.87</td><td style="background:rgba(157,195,230,0.67)">70.59</td><td style="background:rgba(157,195,230,0.67)">76.01</td></tr>
+<tr><td class="rowlabel">Vision-OPD</td><td style="background:rgba(157,195,230,0.78)">92.15</td><td style="background:rgba(157,195,230,0.74)">59.76</td><td style="background:rgba(157,195,230,0.64)">84.50</td><td style="background:rgba(157,195,230,0.62)">80.38</td><td style="background:rgba(157,195,230,0.72)">74.88</td><td style="background:rgba(157,195,230,0.67)">70.76</td><td style="background:rgba(157,195,230,0.71)">77.07</td></tr>
+<tr class="group"><td colspan="8">w/o privileged info. (ours)</td></tr>
+<tr class="ours"><td class="rowlabel">S<sup>2</sup>VOD (Vision-OPD corpus)</td><td style="background:rgba(157,195,230,0.63)">87.43</td><td style="background:rgba(157,195,230,0.68)">57.99</td><td style="background:rgba(157,195,230,0.65)">84.88</td><td style="background:rgba(157,195,230,0.71)">83.62</td><td style="background:rgba(157,195,230,0.63)">72.87</td><td style="background:rgba(157,195,230,0.70)">71.29</td><td style="background:rgba(157,195,230,0.68)">76.35</td></tr>
+<tr class="ours"><td class="rowlabel">S<sup>2</sup>VOD</td><td style="background:rgba(157,195,230,0.76)">91.48</td><td style="background:rgba(157,195,230,0.62)">55.98</td><td style="background:rgba(157,195,230,0.70)">86.38</td><td style="background:rgba(157,195,230,0.66)">82.00</td><td style="background:rgba(157,195,230,0.78)">76.13</td><td style="background:rgba(157,195,230,0.75)">72.66</td><td style="background:rgba(157,195,230,0.73)">77.44</td></tr>
+</tbody>
+</table></div>
+
+    <h3>Controlled comparison on the Vision-OPD corpus</h3>
+    <p class="table-caption">Every trainable baseline trained on the same corpus at both scales; <b>bold</b> / <u>underline</u> = best / second-best per column within each base model; <sup>&sect;</sup>best checkpoint of a step-5&ndash;65 sweep. S<sup>2</sup>VOD beats every unsupervised method (TTRL, Intuitor, RENT) at both scales and every privileged method at 4B, while being the only method at the top of perception and math simultaneously &mdash; privileged methods trade math for perception, and intrinsic-reward RL keeps math but barely moves perception.</p>
+    <div class="table-scroll"><table class="results">
+<thead><tr class="span"><th></th><th colspan="6">Perception</th><th colspan="3" class="mathgrp">Math reasoning</th><th></th></tr><tr><th>Method</th><th>V*</th><th>Zoom</th><th>HR-4K</th><th>HR-8K</th><th>MME-RW</th><th>MME-RW-CN</th><th class="mathgrp">MathVista</th><th class="mathgrp">MathVerse</th><th class="mathgrp">MathVision</th><th class="avgcol">Avg</th></tr></thead>
+<tbody>
+<tr class="scale"><td colspan="11">Qwen3.5-4B</td></tr>
+<tr><td class="rowlabel">Base model</td><td style="background:rgba(157,195,230,0.30)">84.29</td><td style="background:rgba(157,195,230,0.08)">47.69</td><td class="second" style="background:rgba(157,195,230,0.68)">84.38</td><td style="background:rgba(157,195,230,0.43)">80.13</td><td style="background:rgba(157,195,230,0.35)">63.86</td><td style="background:rgba(157,195,230,0.30)">63.70</td><td style="background:rgba(157,195,230,0.37)">75.80</td><td style="background:rgba(157,195,230,0.68)">67.56</td><td style="background:rgba(157,195,230,0.73)">65.26</td><td style="background:rgba(157,195,230,0.32)">70.30</td></tr>
+<tr class="group"><td colspan="11">w/ privileged info.</td></tr>
+<tr><td class="rowlabel">ZwZ<sup>&Dagger;</sup></td><td class="best" style="background:rgba(157,195,230,0.80)">92.67</td><td style="background:rgba(157,195,230,0.50)">55.74</td><td style="background:rgba(157,195,230,0.08)">81.75</td><td style="background:rgba(157,195,230,0.37)">79.50</td><td style="background:rgba(157,195,230,0.54)">68.52</td><td style="background:rgba(157,195,230,0.52)">68.09</td><td style="background:rgba(157,195,230,0.08)">71.80</td><td style="background:rgba(157,195,230,0.08)">40.48</td><td style="background:rgba(157,195,230,0.08)">52.17</td><td style="background:rgba(157,195,230,0.08)">67.86</td></tr>
+<tr><td class="rowlabel">O<span class='sc'>psd</span></td><td style="background:rgba(157,195,230,0.39)">85.86</td><td class="second" style="background:rgba(157,195,230,0.72)">59.88</td><td style="background:rgba(157,195,230,0.66)">84.25</td><td style="background:rgba(157,195,230,0.08)">76.75</td><td class="best" style="background:rgba(157,195,230,0.80)">74.70</td><td class="best" style="background:rgba(157,195,230,0.80)">73.40</td><td style="background:rgba(157,195,230,0.15)">72.80</td><td style="background:rgba(157,195,230,0.64)">66.17</td><td style="background:rgba(157,195,230,0.27)">55.92</td><td style="background:rgba(157,195,230,0.50)">72.19</td></tr>
+<tr><td class="rowlabel">Vision-OPD</td><td class="second" style="background:rgba(157,195,230,0.71)">91.10</td><td class="best" style="background:rgba(157,195,230,0.80)">61.42</td><td style="background:rgba(157,195,230,0.17)">82.12</td><td style="background:rgba(157,195,230,0.46)">80.38</td><td class="second" style="background:rgba(157,195,230,0.79)">74.38</td><td style="background:rgba(157,195,230,0.62)">69.98</td><td style="background:rgba(157,195,230,0.63)">79.40</td><td style="background:rgba(157,195,230,0.77)">71.68</td><td style="background:rgba(157,195,230,0.59)">62.50</td><td class="second" style="background:rgba(157,195,230,0.75)">74.77</td></tr>
+<tr class="group"><td colspan="11">w/o privileged info.</td></tr>
+<tr><td class="rowlabel">Intuitor<sup>&sect;</sup></td><td style="background:rgba(157,195,230,0.11)">81.15</td><td style="background:rgba(157,195,230,0.27)">51.24</td><td style="background:rgba(157,195,230,0.54)">83.75</td><td class="second" style="background:rgba(157,195,230,0.67)">82.38</td><td style="background:rgba(157,195,230,0.08)">57.50</td><td style="background:rgba(157,195,230,0.08)">59.57</td><td class="best" style="background:rgba(157,195,230,0.80)">81.80</td><td style="background:rgba(157,195,230,0.77)">71.98</td><td style="background:rgba(157,195,230,0.73)">65.23</td><td style="background:rgba(157,195,230,0.34)">70.51</td></tr>
+<tr><td class="rowlabel">RENT<sup>&sect;</sup></td><td style="background:rgba(157,195,230,0.08)">80.63</td><td style="background:rgba(157,195,230,0.25)">51.01</td><td style="background:rgba(157,195,230,0.34)">82.88</td><td style="background:rgba(157,195,230,0.59)">81.62</td><td style="background:rgba(157,195,230,0.12)">58.55</td><td style="background:rgba(157,195,230,0.15)">60.93</td><td style="background:rgba(157,195,230,0.70)">80.47</td><td class="second" style="background:rgba(157,195,230,0.79)">72.64</td><td class="best" style="background:rgba(157,195,230,0.80)">66.74</td><td style="background:rgba(157,195,230,0.35)">70.61</td></tr>
+<tr><td class="rowlabel">TTRL<sup>&sect;</sup></td><td style="background:rgba(157,195,230,0.40)">85.96</td><td style="background:rgba(157,195,230,0.50)">55.62</td><td style="background:rgba(157,195,230,0.37)">83.00</td><td style="background:rgba(157,195,230,0.62)">81.88</td><td style="background:rgba(157,195,230,0.60)">69.85</td><td style="background:rgba(157,195,230,0.39)">65.56</td><td style="background:rgba(157,195,230,0.73)">80.80</td><td style="background:rgba(157,195,230,0.77)">71.68</td><td class="second" style="background:rgba(157,195,230,0.73)">65.33</td><td style="background:rgba(157,195,230,0.60)">73.30</td></tr>
+<tr class="ours"><td class="rowlabel">S<sup>2</sup>VOD (ours)</td><td style="background:rgba(157,195,230,0.49)">87.43</td><td style="background:rgba(157,195,230,0.62)">57.99</td><td class="best" style="background:rgba(157,195,230,0.80)">84.88</td><td class="best" style="background:rgba(157,195,230,0.80)">83.62</td><td style="background:rgba(157,195,230,0.72)">72.87</td><td class="second" style="background:rgba(157,195,230,0.69)">71.29</td><td class="second" style="background:rgba(157,195,230,0.78)">81.50</td><td class="best" style="background:rgba(157,195,230,0.80)">73.22</td><td style="background:rgba(157,195,230,0.72)">65.13</td><td class="best" style="background:rgba(157,195,230,0.80)">75.33</td></tr>
+<tr class="scale"><td colspan="11">Qwen3.5-9B</td></tr>
+<tr><td class="rowlabel">Base model</td><td style="background:rgba(157,195,230,0.08)">82.72</td><td style="background:rgba(157,195,230,0.08)">52.07</td><td class="second" style="background:rgba(157,195,230,0.74)">85.75</td><td style="background:rgba(157,195,230,0.08)">80.63</td><td style="background:rgba(157,195,230,0.33)">71.40</td><td style="background:rgba(157,195,230,0.08)">67.67</td><td style="background:rgba(157,195,230,0.42)">78.80</td><td style="background:rgba(157,195,230,0.60)">70.25</td><td style="background:rgba(157,195,230,0.65)">66.91</td><td style="background:rgba(157,195,230,0.26)">72.91</td></tr>
+<tr class="group"><td colspan="11">w/ privileged info.</td></tr>
+<tr><td class="rowlabel">ZwZ-8B</td><td class="best" style="background:rgba(157,195,230,0.80)">91.10</td><td style="background:rgba(157,195,230,0.46)">58.11</td><td style="background:rgba(157,195,230,0.40)">84.38</td><td style="background:rgba(157,195,230,0.30)">82.00</td><td style="background:rgba(157,195,230,0.08)">69.87</td><td style="background:rgba(157,195,230,0.54)">70.59</td><td style="background:rgba(157,195,230,0.16)">76.00</td><td style="background:rgba(157,195,230,0.08)">56.45</td><td style="background:rgba(157,195,230,0.08)">57.01</td><td style="background:rgba(157,195,230,0.08)">71.72</td></tr>
+<tr><td class="rowlabel">O<span class='sc'>psd</span></td><td style="background:rgba(157,195,230,0.48)">87.43</td><td class="second" style="background:rgba(157,195,230,0.66)">61.18</td><td style="background:rgba(157,195,230,0.49)">84.75</td><td style="background:rgba(157,195,230,0.28)">81.88</td><td class="second" style="background:rgba(157,195,230,0.77)">74.10</td><td class="second" style="background:rgba(157,195,230,0.77)">72.00</td><td style="background:rgba(157,195,230,0.08)">75.10</td><td style="background:rgba(157,195,230,0.59)">70.10</td><td style="background:rgba(157,195,230,0.19)">58.98</td><td style="background:rgba(157,195,230,0.41)">73.95</td></tr>
+<tr><td class="rowlabel">Vision-OPD</td><td style="background:rgba(157,195,230,0.62)">89.01</td><td class="best" style="background:rgba(157,195,230,0.80)">63.43</td><td class="best" style="background:rgba(157,195,230,0.80)">86.00</td><td class="best" style="background:rgba(157,195,230,0.80)">85.12</td><td style="background:rgba(157,195,230,0.09)">69.95</td><td style="background:rgba(157,195,230,0.28)">68.92</td><td class="best" style="background:rgba(157,195,230,0.80)">83.00</td><td style="background:rgba(157,195,230,0.76)">74.64</td><td style="background:rgba(157,195,230,0.77)">68.98</td><td class="best" style="background:rgba(157,195,230,0.80)">76.56</td></tr>
+<tr class="group"><td colspan="11">w/o privileged info.</td></tr>
+<tr><td class="rowlabel">RENT<sup>&sect;</sup></td><td style="background:rgba(157,195,230,0.57)">88.48</td><td style="background:rgba(157,195,230,0.37)">56.69</td><td style="background:rgba(157,195,230,0.08)">83.12</td><td style="background:rgba(157,195,230,0.28)">81.88</td><td style="background:rgba(157,195,230,0.46)">72.20</td><td style="background:rgba(157,195,230,0.11)">67.89</td><td style="background:rgba(157,195,230,0.44)">79.00</td><td style="background:rgba(157,195,230,0.77)">74.92</td><td class="second" style="background:rgba(157,195,230,0.79)">69.31</td><td style="background:rgba(157,195,230,0.54)">74.83</td></tr>
+<tr><td class="rowlabel">Intuitor<sup>&sect;</sup></td><td style="background:rgba(157,195,230,0.62)">89.01</td><td style="background:rgba(157,195,230,0.38)">56.88</td><td class="second" style="background:rgba(157,195,230,0.74)">85.75</td><td class="second" style="background:rgba(157,195,230,0.54)">83.50</td><td style="background:rgba(157,195,230,0.45)">72.18</td><td style="background:rgba(157,195,230,0.12)">67.91</td><td style="background:rgba(157,195,230,0.57)">80.50</td><td class="second" style="background:rgba(157,195,230,0.80)">75.56</td><td class="best" style="background:rgba(157,195,230,0.80)">69.57</td><td style="background:rgba(157,195,230,0.66)">75.65</td></tr>
+<tr><td class="rowlabel">TTRL<sup>&sect;</sup></td><td style="background:rgba(157,195,230,0.53)">87.96</td><td style="background:rgba(157,195,230,0.34)">56.14</td><td style="background:rgba(157,195,230,0.46)">84.62</td><td style="background:rgba(157,195,230,0.22)">81.50</td><td style="background:rgba(157,195,230,0.57)">72.90</td><td style="background:rgba(157,195,230,0.14)">68.08</td><td style="background:rgba(157,195,230,0.47)">79.40</td><td style="background:rgba(157,195,230,0.77)">74.72</td><td style="background:rgba(157,195,230,0.69)">67.62</td><td style="background:rgba(157,195,230,0.53)">74.77</td></tr>
+<tr class="ours"><td class="rowlabel">S<sup>2</sup>VOD (ours)</td><td class="second" style="background:rgba(157,195,230,0.76)">90.58</td><td style="background:rgba(157,195,230,0.39)">56.92</td><td style="background:rgba(157,195,230,0.58)">85.12</td><td style="background:rgba(157,195,230,0.38)">82.50</td><td class="best" style="background:rgba(157,195,230,0.80)">74.31</td><td class="best" style="background:rgba(157,195,230,0.80)">72.22</td><td class="second" style="background:rgba(157,195,230,0.60)">80.80</td><td class="best" style="background:rgba(157,195,230,0.80)">75.63</td><td style="background:rgba(157,195,230,0.77)">69.11</td><td class="second" style="background:rgba(157,195,230,0.77)">76.35</td></tr>
+</tbody>
+</table></div>
+
+    <div id="ablations">
+      <h3>Ablations</h3>
+      <p class="table-caption"><b>Component ablation (Table 4).</b> <em>w/o Aug.</em> removes the view asymmetry (student sees the same clean image as the teacher); <em>w/o EMA</em> keeps the augmentation but freezes the teacher at the base model. No asymmetry collapses the gain to base level (70.52); a frozen teacher costs only 0.40 &mdash; the supervision comes from the constructed asymmetry, not teacher self-improvement.</p>
+      <div class="table-scroll"><table class="results" id="table-component">
+<thead><tr><th>Method</th><th>V*</th><th>Zoom</th><th>HR-4K</th><th>HR-8K</th><th>MME-RW</th><th>MME-RW-CN</th><th>Avg</th></tr></thead>
+<tbody>
+<tr class="ours"><td class="rowlabel">S<sup>2</sup>VOD</td><td class="best" style="background:rgba(157,195,230,0.72)">87.43</td><td class="best" style="background:rgba(157,195,230,0.80)">57.99</td><td style="background:rgba(157,195,230,0.08)">84.88</td><td class="best" style="background:rgba(157,195,230,0.80)">83.62</td><td class="best" style="background:rgba(157,195,230,0.80)">72.87</td><td class="best" style="background:rgba(157,195,230,0.80)">71.29</td><td class="best" style="background:rgba(157,195,230,0.80)">76.35</td></tr>
+<tr><td class="rowlabel">w/o Aug.</td><td style="background:rgba(157,195,230,0.08)">79.06</td><td style="background:rgba(157,195,230,0.08)">50.18</td><td class="best" style="background:rgba(157,195,230,0.70)">86.50</td><td style="background:rgba(157,195,230,0.08)">80.62</td><td style="background:rgba(157,195,230,0.08)">62.85</td><td style="background:rgba(157,195,230,0.08)">63.90</td><td style="background:rgba(157,195,230,0.08)">70.52</td></tr>
+<tr><td class="rowlabel">w/o EMA</td><td class="best" style="background:rgba(157,195,230,0.80)">88.48</td><td style="background:rgba(157,195,230,0.44)">54.08</td><td style="background:rgba(157,195,230,0.80)">86.75</td><td style="background:rgba(157,195,230,0.71)">83.25</td><td style="background:rgba(157,195,230,0.75)">72.15</td><td style="background:rgba(157,195,230,0.77)">70.98</td><td style="background:rgba(157,195,230,0.75)">75.95</td></tr>
+</tbody>
+</table></div>
+
+      <div class="ablation-grid">
+        <div>
+          <p class="table-caption"><b>Teacher update rate (Table 5).</b> The six-benchmark average moves &le;0.8 across EMA decays, non-monotonically &mdash; the EMA update is not an essential component.</p>
+          <div class="table-scroll"><table class="results" id="table-ema">
+<thead><tr><th>Teacher decay</th><th>MME-RW</th><th>MME-RW-CN</th><th>Avg</th></tr></thead>
+<tbody>
+<tr><td class="rowlabel">0.95</td><td class="best" style="background:rgba(157,195,230,0.80)">72.87</td><td style="background:rgba(157,195,230,0.46)">71.29</td><td class="best" style="background:rgba(157,195,230,0.80)">76.35</td></tr>
+<tr><td class="rowlabel">0.99</td><td style="background:rgba(157,195,230,0.46)">72.53</td><td style="background:rgba(157,195,230,0.19)">71.07</td><td style="background:rgba(157,195,230,0.08)">75.56</td></tr>
+<tr><td class="rowlabel">0.999</td><td style="background:rgba(157,195,230,0.22)">72.29</td><td class="best" style="background:rgba(157,195,230,0.80)">71.56</td><td style="background:rgba(157,195,230,0.48)">76.00</td></tr>
+<tr><td class="rowlabel">1.0 (fixed teacher)</td><td style="background:rgba(157,195,230,0.08)">72.15</td><td style="background:rgba(157,195,230,0.08)">70.98</td><td style="background:rgba(157,195,230,0.44)">75.95</td></tr>
+</tbody>
+</table></div>
+        </div>
+        <div>
+          <p class="table-caption"><b>Divergence (Table 6).</b> JSD &gt; reverse KL &gt; forward KL: forward KL drags the student toward detail it cannot see; reverse KL is mode-seeking and discards the signal.</p>
+          <div class="table-scroll"><table class="results" id="table-alpha">
+<thead><tr><th>&alpha;</th><th>MME-RW</th><th>MME-RW-CN</th><th>Avg</th></tr></thead>
+<tbody>
+<tr><td class="rowlabel">0.0 (forward KL)</td><td style="background:rgba(157,195,230,0.08)">71.92</td><td style="background:rgba(157,195,230,0.08)">69.75</td><td style="background:rgba(157,195,230,0.08)">74.74</td></tr>
+<tr><td class="rowlabel">0.5 (JSD)</td><td class="best" style="background:rgba(157,195,230,0.80)">74.15</td><td class="best" style="background:rgba(157,195,230,0.80)">71.34</td><td class="best" style="background:rgba(157,195,230,0.80)">76.05</td></tr>
+<tr><td class="rowlabel">1.0 (reverse KL)</td><td style="background:rgba(157,195,230,0.24)">72.43</td><td style="background:rgba(157,195,230,0.65)">71.00</td><td style="background:rgba(157,195,230,0.49)">75.49</td></tr>
+</tbody>
+</table></div>
+        </div>
+      </div>
+
+      <p class="table-caption" style="margin-top:1rem"><b>Privileged information does not compose with augmentation.</b> Giving the teacher its ground-truth bounding boxes while corrupting the student degrades monotonically with augmentation coverage &mdash; 76.56 (none) &rarr; 75.29 (p=0.3) &rarr; 73.17 (p=0.9), with a 50/50 mixture in between (75.14). Augmentation-induced asymmetry is a <em>replacement</em> for privileged supervision, not an additive trick.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= BIBTEX ================= -->
+<section id="bibtex">
+  <div class="container">
+    <h2>BibTeX</h2>
+    <div class="bibtex-wrap">
+      <button id="copy-bibtex">Copy</button>
+      <pre class="bibtex">@article{li2026s2vod,
+  title   = {Self-Supervised Visual On-Policy Distillation},
+  author  = {Li, Yijiang and Liang, Yijun and Tian, Yunjie and Wang, Bingyang and
+             Zhang, Ke and Yin, Zhenfei and Fu, Di and Torr, Philip and Vasconcelos, Nuno},
+  journal = {arXiv preprint},
+  year    = {2026}
+}</pre>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>Website for <i>Self-Supervised Visual On-Policy Distillation</i> (S<sup>2</sup>VOD). Layout inspired by the <a href="https://nerfies.github.io/" target="_blank" rel="noopener">Nerfies</a> and <a href="https://rent-rl.github.io/" target="_blank" rel="noopener">RENT</a> project pages.</p>
+  </div>
+</footer>
+
+<script src="static/js/figure.js"></script>
+</body>
+</html>
