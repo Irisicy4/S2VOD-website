@@ -83,6 +83,7 @@ MathJax = { tex: { inlineMath: [["\\(", "\\)"]] }, svg: { fontCache: "global" } 
 <section id="overview">
   <div class="container">
     <h2>How S<sup>2</sup>VOD works</h2>
+    <p style="max-width:900px;margin:0 auto 1.2rem">These findings lead to a simple default instantiation of S<sup>2</sup>VOD: downscaling with stochastic Gaussian noise. Across six fine-grained perception benchmarks, S<sup>2</sup>VOD improves Qwen3.5-4B from 70.7% to 77.4%&mdash;above every open-source model compared, up to Qwen3-VL at 235B and beats GPT-5.4. While holding training data the same, it recovers 96% of the improvement achieved by the best supervised method at 76.6% averaged accuracy.</p>
 
     <div id="arch-figure">
       <img src="static/images/figure.png" alt="S2VOD architecture: an EMA teacher scores student rollouts under the clean image while the student generates from an augmented view; a per-token divergence is the entire training signal. Below, the augmentation space: downscale, noise, contrast, rotation, zoom-out, pixelation, brightness, saturation, crop-and-zoom, occlusion.">
